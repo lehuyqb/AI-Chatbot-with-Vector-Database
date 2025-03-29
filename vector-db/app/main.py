@@ -2,14 +2,14 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional, Dict
 import openai
-from .services.vector_db import VectorDBService
+from .services.vector_db_factory import create_vector_db
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
 app = FastAPI(title="Vector Database Service")
-vector_db = VectorDBService()
+vector_db = create_vector_db()
 
 # Configure OpenAI
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -77,4 +77,4 @@ async def cleanup_old_entries(timestamp: int):
 @app.on_event("shutdown")
 async def shutdown_event():
     """Cleanup on shutdown"""
-    vector_db.close() 
+    vector_db.disconnect() 
